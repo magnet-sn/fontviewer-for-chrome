@@ -6,6 +6,10 @@
 ## .pyについて
 Pythonで動かしたい場合はPyQt6を入れること
 
-## htmlについて
+## .htmlについて
 Chromiumのみの対応
 少なくともFirefoxでは使えなかった
+
+## .exeについて
+64bit版のみ対応(してると思う)
+32bitが欲しかったら各自PyInstallerとかで.pyを.exe化してほしい
