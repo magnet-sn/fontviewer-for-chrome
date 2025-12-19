@@ -15,4 +15,4 @@ Braveも使えないらしい
 
 ## .exeについて
 64bit版のみ対応(してると思う)
-32bitが欲しかったら各自PyInstallerとかで.pyを.exe化してほしい
+32bitが欲しかったら各自PyInstallerとかで作って
