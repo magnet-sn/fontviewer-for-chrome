@@ -620,3 +620,4 @@ if __name__ == "__main__":
     window = FontViewerApp()
     window.show()
     sys.exit(app.exec())
+
