@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Font Viewer - Speed Edition</title>
+    <title>Font Viewer</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -31,7 +31,7 @@
             color: var(--text-color);
             font-family: sans-serif;
             overflow: hidden;
-            user-select: none; /* UI操作を快適に */
+            user-select: none;
         }
 
         /* カスタムスクロールバー */
@@ -42,7 +42,7 @@
 
         /* カードスタイル */
         .font-card {
-            position: absolute; /* 仮想スクロールのために絶対配置 */
+            position: absolute;
             top: 0; left: 0;
             background-color: var(--card-bg);
             border-radius: 6px;
@@ -50,8 +50,8 @@
             cursor: pointer;
             box-sizing: border-box;
             border: 2px solid transparent;
-            transition: background-color 0.2s;
-            contain: strict; /* 描画最適化 */
+            transition: background-color 0.2s, border-color 0.2s;
+            contain: strict;
         }
 
         .font-card:hover {
@@ -71,7 +71,7 @@
             background-color: rgba(59, 130, 246, 0.2);
         }
 
-        /* テキストプレビュー（縁取り対応） */
+        /* テキストプレビュー */
         .preview-text {
             width: 100%;
             height: 100%;
@@ -79,10 +79,11 @@
             align-items: center;
             padding: 0 10px;
             white-space: nowrap;
-            /* 縁取りの魔法 */
+            /* 縁取りの適用 */
             paint-order: stroke fill;
             -webkit-text-stroke-width: var(--stroke-width, 0);
             -webkit-text-stroke-color: var(--stroke-color, transparent);
+            letter-spacing: var(--letter-spacing, 0px);
         }
 
         /* 未対応文字（豆腐）の表示スタイル */
@@ -90,16 +91,14 @@
             display: inline-block;
             width: 0.8em;
             height: 0.8em;
-            border: 1px solid currentColor; /* 文字色と同じ枠線 */
+            border: 1px solid currentColor;
             position: relative;
             margin: 0 2px;
             vertical-align: middle;
             flex-shrink: 0;
-            /* 縁取りの影響を受けないようにリセット */
             -webkit-text-stroke-width: 0; 
             paint-order: normal;
         }
-        /* バツ印 */
         .missing-box::before, .missing-box::after {
             content: '';
             position: absolute;
@@ -127,17 +126,14 @@
 </head>
 <body class="flex flex-col h-screen">
 
-    <!-- ヘッダーエリア -->
     <div class="flex-none p-3 border-b border-gray-600 bg-opacity-90 backdrop-blur z-20 flex flex-col gap-2 shadow-lg" style="background: var(--card-bg);">
         
-        <!-- 1段目: メイン操作 -->
         <div class="flex flex-wrap gap-3 items-center">
             <button id="btnLoad" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 rounded text-sm font-bold shadow transition-transform active:scale-95">
                 PCフォント読込
             </button>
             <div class="flex-1 flex gap-2 items-center min-w-[200px]">
                 <span class="text-xs font-bold whitespace-nowrap">文章:</span>
-                <!-- 背景白、文字黒、枠黒 (ダークモード: 背景黒、文字白、枠白) -->
                 <input type="text" id="inputText" value="サンプル&Sample" 
                     class="flex-1 rounded px-2 py-1 text-sm focus:outline-none focus:border-blue-500
                            bg-white text-black border border-black 
@@ -145,7 +141,6 @@
             </div>
             <div class="flex-1 flex gap-2 items-center min-w-[150px] relative">
                 <span class="text-xs font-bold whitespace-nowrap">検索:</span>
-                <!-- 背景白、文字黒、枠黒 (ダークモード: 背景黒、文字白、枠白) -->
                 <input type="text" id="searchBox" placeholder="フォント名..." 
                     class="flex-1 rounded px-2 py-1 text-sm focus:outline-none focus:border-blue-500
                            bg-white text-black border border-black 
@@ -154,7 +149,6 @@
             </div>
         </div>
 
-        <!-- 2段目: スタイルとサイズ -->
         <div class="flex flex-wrap gap-4 items-center text-sm">
             <label class="flex items-center gap-1 cursor-pointer select-none">
                 <input type="checkbox" id="chkDark"> ダークモード
@@ -167,20 +161,20 @@
                 <input type="checkbox" id="chkItalic"> 斜体
             </label>
             
-            <!-- サイズ調整エリア: 背景白、文字黒、枠黒 (ダークモード: 背景黒、文字白、枠白) -->
-            <div class="flex items-center gap-2 ml-4 px-2 py-0.5 rounded
-                        bg-white text-black border border-black
-                        dark:bg-black dark:text-white dark:border-white">
+            <div class="flex items-center gap-2 ml-2 px-2 py-0.5 rounded bg-white text-black border border-black dark:bg-black dark:text-white dark:border-white">
                 <span class="text-xs">サイズ:</span>
-                <input type="range" id="sliderSize" min="12" max="150" value="32" class="w-24">
-                <input type="number" id="numSize" min="12" max="150" value="32" 
-                    class="w-12 text-center border-b focus:outline-none bg-transparent
-                           border-black dark:border-white">
+                <input type="range" id="sliderSize" min="12" max="150" value="32" class="w-20">
+                <input type="number" id="numSize" min="12" max="150" value="32" class="w-12 text-center border-b focus:outline-none bg-transparent border-black dark:border-white">
+                <span class="text-xs">px</span>
+            </div>
+
+            <div class="flex items-center gap-2 px-2 py-0.5 rounded bg-white text-black border border-black dark:bg-black dark:text-white dark:border-white">
+                <span class="text-xs">間隔:</span>
+                <input type="range" id="sliderSpace" min="-5" max="30" value="0" class="w-16">
                 <span class="text-xs">px</span>
             </div>
         </div>
 
-        <!-- 3段目: カラー -->
         <div class="flex gap-4 items-center text-xs">
             <div class="flex items-center gap-1">
                 <span>文字色:</span>
@@ -192,7 +186,6 @@
             </div>
             <div class="flex items-center gap-1 relative group">
                 <span>縁取り:</span>
-                <!-- input colorは非表示にし、ボタンで制御 -->
                 <input type="color" id="colEdge" value="#ffffff" class="absolute opacity-0 w-0 h-0">
                 <button id="btnEdge" class="border border-gray-400 rounded px-2 py-0.5 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 min-w-[60px]">なし</button>
                 <div class="absolute bottom-full left-0 mb-1 bg-black text-white px-2 py-1 rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50">
@@ -200,28 +193,21 @@
                 </div>
             </div>
             
-            <div class="ml-auto text-gray-500">
+            <div class="ml-auto text-gray-500 font-bold">
                 Font Count: <span id="lblCount">0</span>
             </div>
         </div>
     </div>
 
-    <!-- ピン留めエリア (固定表示) -->
-    <div id="pinnedContainer" class="flex-none flex gap-2 p-2 overflow-x-auto border-b border-gray-600 hidden bg-opacity-50" style="min-height: 100px;">
-        <!-- JSで描画 -->
-    </div>
+    <div id="pinnedContainer" class="flex-none flex gap-2 p-2 overflow-x-auto border-b border-gray-600 hidden bg-opacity-50" style="min-height: 100px;"></div>
     <div id="hintMsg" class="text-center text-xs text-gray-500 py-1 flex-none bg-opacity-90" style="background:var(--bg-color)">
-        フォントをクリックして [1]〜[5] キーで上部に固定
+        カード右上のアイコン、または [1]〜[5] キーで上部に固定 / コピーアイコンでフォント名をコピー
     </div>
 
-    <!-- 仮想スクロールコンテナ -->
     <div id="scrollContainer" class="flex-1 relative overflow-y-auto overflow-x-hidden w-full">
-        <!-- 高さ確保用のダミー要素 -->
         <div id="scrollSpacer" class="absolute top-0 left-0 w-full h-px pointer-events-none"></div>
-        <!-- 実際のカードが配置されるコンテナ -->
         <div id="contentGrid" class="absolute top-0 left-0 w-full"></div>
         
-        <!-- ウェルカムメッセージ -->
         <div id="welcome" class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-0">
             <p class="text-lg text-gray-500 mb-2">左上の「PCフォント読込」を押してください</p>
             <p class="text-xs text-gray-400">※Chrome / Edge / Opera 等のブラウザ推奨</p>
@@ -231,27 +217,27 @@
     <script>
         // --- データ管理 ---
         const state = {
-            allFonts: [],      // 全フォントデータ
-            displayFonts: [],  // フィルタ後の表示リスト
+            allFonts: [],
+            displayFonts: [],
             pinned: {1:null, 2:null, 3:null, 4:null, 5:null},
-            selected: null,    // 選択中のフォント名
-            // スタイル設定
+            selected: null,
             text: "サンプル&Sample",
             fontSize: 32,
+            letterSpacing: 0,
             isBold: false,
             isItalic: false,
             isDark: false,
             colText: "#000000",
-            colBg: null,       // nullなら自動
-            colEdge: null,     // nullならなし
+            colBg: null,
+            colEdge: null,
             search: ""
         };
 
         // --- レイアウト定数 ---
         const GAP = 10;
         const PADDING = 10;
-        let cardWidth = 200;  // 動的に計算
-        let cardHeight = 120; // 動的に計算
+        let cardWidth = 200;
+        let cardHeight = 120;
         let cols = 1;
 
         // --- DOM要素 ---
@@ -262,44 +248,36 @@
             pinned: document.getElementById('pinnedContainer'),
             welcome: document.getElementById('welcome'),
             count: document.getElementById('lblCount'),
-            // 入力系
             btnLoad: document.getElementById('btnLoad'),
             input: document.getElementById('inputText'),
             search: document.getElementById('searchBox'),
             btnClrSearch: document.getElementById('btnClearSearch'),
-            // 設定系
             chkDark: document.getElementById('chkDark'),
             chkBold: document.getElementById('chkBold'),
             chkItalic: document.getElementById('chkItalic'),
             slider: document.getElementById('sliderSize'),
             numSize: document.getElementById('numSize'),
+            sliderSpace: document.getElementById('sliderSpace'),
             colText: document.getElementById('colText'),
             colBg: document.getElementById('colBg'),
             colEdge: document.getElementById('colEdge'),
             btnEdge: document.getElementById('btnEdge')
         };
 
-        // --- グリフ判定用 ---
-        // 判定用のキャンバスとコンテキストを1回だけ作成
         const checkCtx = document.createElement('canvas').getContext('2d');
-        // 判定結果のキャッシュ (key: "FontName:Char" -> value: boolean)
         const glyphCache = new Map();
 
         // --- 初期化 ---
         function init() {
-            // リスナー登録
             ui.btnLoad.onclick = loadFonts;
             ui.container.onscroll = onScroll;
             window.onresize = onResize;
 
-            // 入力同期
             ui.input.oninput = (e) => { 
                 state.text = e.target.value || " ";
-                // 文字数等が変わるのでレイアウト再計算が必要
                 updateCardMetrics();
                 updateVirtualScrollHeight();
-                render(); 
-                renderPinned(); 
+                render(); renderPinned(); 
             };
             
             ui.search.oninput = (e) => {
@@ -314,11 +292,9 @@
                 filterFonts();
             };
 
-            // スタイル変更
             ui.chkDark.onchange = (e) => {
                 state.isDark = e.target.checked;
                 document.body.classList.toggle('dark', state.isDark);
-                // プリセット色適用
                 if (state.isDark) {
                     state.colText = "#ffffff";
                     state.colBg = "#141414";
@@ -334,25 +310,28 @@
             ui.chkBold.onchange = (e) => { state.isBold = e.target.checked; render(); renderPinned(); };
             ui.chkItalic.onchange = (e) => { state.isItalic = e.target.checked; render(); renderPinned(); };
 
-            // サイズ変更
             const setSize = (v) => {
                 state.fontSize = parseInt(v);
                 ui.slider.value = state.fontSize;
                 ui.numSize.value = state.fontSize;
                 updateCardMetrics();
                 updateVirtualScrollHeight();
-                render(); 
-                renderPinned(); // ピン留めもサイズ変える
+                render(); renderPinned();
             };
             ui.slider.oninput = (e) => setSize(e.target.value);
             ui.numSize.oninput = (e) => setSize(e.target.value);
 
-            // 色変更
+            ui.sliderSpace.oninput = (e) => {
+                state.letterSpacing = parseInt(e.target.value);
+                updateCardMetrics();
+                updateVirtualScrollHeight();
+                render(); renderPinned();
+            };
+
             ui.colText.oninput = (e) => { state.colText = e.target.value; render(); renderPinned(); };
             ui.colBg.oninput = (e) => { state.colBg = e.target.value; render(); };
 
-            // 縁取り (カスタムUI)
-            ui.btnEdge.onclick = () => { ui.colEdge.click(); }; // 色選択開く
+            ui.btnEdge.onclick = () => { ui.colEdge.click(); };
             ui.colEdge.oninput = (e) => {
                 state.colEdge = e.target.value;
                 updateEdgeUI();
@@ -365,36 +344,29 @@
                 render(); renderPinned();
             };
 
-            // キーボード操作 (1-5)
             document.onkeydown = (e) => {
                 if (document.activeElement.tagName === "INPUT") return;
-                if (e.key >= '1' && e.key <= '5') togglePin(parseInt(e.key));
+                if (e.key >= '1' && e.key <= '5') togglePinBySelected(parseInt(e.key));
             };
 
             updateCardMetrics();
             updateEdgeUI();
         }
 
-        // --- フォント読込 ---
         async function loadFonts() {
-            // 一般的な標準フォントリスト（APIが使えない場合のフォールバック）
             const standardFonts = [
-                // Windows
                 "Yu Gothic", "Yu Gothic UI", "Meiryo", "Meiryo UI", "MS PGothic", "MS Gothic", 
                 "MS PMincho", "MS Mincho", "BIZ UDPGothic", "BIZ UDGothic", "UD Digi Kyokasho",
                 "HGSGothicE", "HGSMinchoE", "HGMaruGothicMPRO", "Segoe UI", "Consolas",
-                // Mac
                 "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Hiragino Mincho ProN", "Osaka", 
                 "Apple Color Emoji", "Monaco", "Menlo",
-                // Standard Latin
                 "Arial", "Arial Black", "Helvetica", "Verdana", "Tahoma", "Trebuchet MS", 
                 "Times New Roman", "Georgia", "Garamond", "Courier New", "Comic Sans MS", "Impact",
-                // Google / Other
                 "Noto Sans JP", "Roboto", "Open Sans", "Lato"
             ];
 
             if (!window.queryLocalFonts) {
-                alert("お使いのブラウザはローカルフォント取得(Local Font Access API)に対応していません。\n代わりに一般的な標準フォントリストを表示します。\n\n※全フォントを表示するにはChromeやEdgeの最新版をご利用ください。");
+                alert("お使いのブラウザはローカルフォント取得APIに対応していません。\n代わりに標準フォントリストを表示します。");
                 state.allFonts = standardFonts.sort();
                 finishLoad();
                 return;
@@ -403,14 +375,13 @@
             try {
                 ui.btnLoad.textContent = "読込中...";
                 const list = await window.queryLocalFonts();
-                // 重複排除してソート
                 const names = new Set();
                 list.forEach(f => names.add(f.family));
                 state.allFonts = Array.from(names).sort();
                 finishLoad();
             } catch (e) {
                 console.error(e);
-                alert("フォントの読み込みが許可されませんでした。\n代わりに一般的な標準フォントリストを表示します。");
+                alert("フォントの読み込みが許可されませんでした。\n代わりに標準フォントリストを表示します。");
                 state.allFonts = standardFonts.sort();
                 finishLoad();
             }
@@ -434,19 +405,13 @@
             render();
         }
 
-        // --- レイアウト計算 (自動フィット) ---
         function updateCardMetrics() {
-            // 高さ計算
             const contentH = Math.max(state.fontSize * 1.5, 40);
             cardHeight = 24 + contentH + 10;
 
-            // 幅計算 (自動フィット)
-            // 標準的なフォントで現在のテキストの幅を計測し、それに基づいて枠幅を決める
             checkCtx.font = `${state.isBold?'bold':''} ${state.isItalic?'italic':''} ${state.fontSize}px sans-serif`;
-            const textWidth = checkCtx.measureText(state.text).width;
-            
-            // パディング(左右20px) + 余裕(20px) + 最低幅(120px)
-            cardWidth = Math.max(textWidth + 40, 120);
+            const textWidth = checkCtx.measureText(state.text).width + (state.text.length * state.letterSpacing);
+            cardWidth = Math.max(textWidth + 40, 150);
 
             ui.pinned.style.height = (cardHeight + 20) + "px";
         }
@@ -466,7 +431,6 @@
             render();
         }
 
-        // --- 仮想スクロール描画 ---
         function onScroll() {
             requestAnimationFrame(render);
         }
@@ -483,7 +447,6 @@
             const endIndex = (endRow + 1) * cols;
 
             let html = "";
-            
             for (let i = startIndex; i < endIndex; i++) {
                 if (i >= state.displayFonts.length) break;
                 if (i < 0) continue;
@@ -502,30 +465,27 @@
             ui.content.innerHTML = html;
         }
 
-        // --- グリフ（文字）がフォントに存在するか判定 ---
         function isGlyphSupported(fontName, char) {
             const key = fontName + ":" + char;
             if (glyphCache.has(key)) return glyphCache.get(key);
 
             const fontSize = "50px"; 
-            
-            // 比較用のベースフォントリスト
             const bases = ['sans-serif', 'serif', 'monospace'];
-            
             let supported = false;
             
             for (const base of bases) {
-                // ベースフォント単体の幅
                 checkCtx.font = `${fontSize} ${base}`;
-                const wBase = checkCtx.measureText(char).width;
+                const mBase = checkCtx.measureText(char);
                 
-                // 対象フォント + ベースフォントの幅
-                // フォント名にスペースが含まれる場合の引用符対応を確実に行う
                 checkCtx.font = `${fontSize} "${fontName}", ${base}`;
-                const wTarget = checkCtx.measureText(char).width;
+                const mTarget = checkCtx.measureText(char);
                 
-                // 幅が違えば、フォント独自のデザインが当たっているとみなす
-                if (wBase !== wTarget) {
+                // 幅だけでなく、文字の上下左右の実際の描画領域（バウンディングボックス）も比較する
+                if (mBase.width !== mTarget.width ||
+                    mBase.actualBoundingBoxAscent !== mTarget.actualBoundingBoxAscent ||
+                    mBase.actualBoundingBoxDescent !== mTarget.actualBoundingBoxDescent ||
+                    mBase.actualBoundingBoxLeft !== mTarget.actualBoundingBoxLeft ||
+                    mBase.actualBoundingBoxRight !== mTarget.actualBoundingBoxRight) {
                     supported = true;
                     break;
                 }
@@ -535,23 +495,14 @@
             return supported;
         }
 
-        // --- HTMLエスケープ ---
         function escapeHtml(str) {
             return str.replace(/[&<>"']/g, function(m) {
-                return {
-                    '&': '&amp;',
-                    '<': '&lt;',
-                    '>': '&gt;',
-                    '"': '&quot;',
-                    "'": '&#039;'
-                }[m];
+                return {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'}[m];
             });
         }
 
-        // --- テキストHTML生成 (1文字ずつ判定) ---
         function renderTextHtml(fontName, text) {
             let html = "";
-            // サロゲートペア対応のために for...of を使用
             for (const char of text) {
                 if (isGlyphSupported(fontName, char)) {
                     html += escapeHtml(char);
@@ -562,7 +513,6 @@
             return html;
         }
 
-        // --- カードHTML生成 ---
         function createCardHtml(font, top, left, slot) {
             const isPinned = slot > 0;
             const isSelected = state.selected === font;
@@ -576,7 +526,7 @@
             const strokeW = state.colEdge ? (state.fontSize * 0.1) + 'px' : '0';
             const strokeC = state.colEdge || 'transparent';
 
-            let cls = "font-card";
+            let cls = "font-card group";
             if(isPinned) cls += " pinned";
             if(isSelected) cls += " selected";
 
@@ -587,15 +537,24 @@
                 ? `width:${cardWidth}px; height:${cardHeight}px; transform:translate(${left}px, ${top}px);`
                 : `width:${cardWidth}px; height:${cardHeight}px; position:relative; flex:none;`;
 
-            // テキスト生成 (グリフ判定付き)
             const textContent = renderTextHtml(font, state.text);
+
+            const actionButtons = `
+                <div class="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1 z-20">
+                    <button onclick="copyFontName(event, '${font}')" class="bg-gray-700 hover:bg-gray-600 text-white p-1 rounded text-xs shadow" title="フォント名をコピー">📋</button>
+                    ${!isPinned 
+                        ? `<button onclick="pinFontDirect(event, '${font}')" class="bg-blue-600 hover:bg-blue-500 text-white p-1 rounded text-xs shadow" title="空きスロットにピン留め">📌</button>` 
+                        : `<button onclick="unpinFontDirect(event, ${slot})" class="bg-red-600 hover:bg-red-500 text-white p-1 rounded text-xs shadow" title="ピン留め解除">❌</button>`}
+                </div>
+            `;
 
             return `
                 <div class="${cls}" style="${posStyle} background-color:${bg};" 
                      onclick="selectFont('${font}')" title="${font}">
-                    <div style="font-size:10px; color:var(--meta-color); padding:4px 6px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                    <div style="font-size:10px; color:var(--meta-color); padding:4px 6px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; position:relative; z-index:10;">
                         ${pinPrefix}${font}
                     </div>
+                    ${actionButtons}
                     <div class="preview-text" style="
                         font-family: '${font}'; 
                         font-size: ${state.fontSize}px;
@@ -604,6 +563,7 @@
                         color: ${state.colText};
                         --stroke-width: ${strokeW};
                         --stroke-color: ${strokeC};
+                        --letter-spacing: ${state.letterSpacing}px;
                     ">
                         ${textContent}
                     </div>
@@ -612,7 +572,6 @@
             `;
         }
 
-        // --- ピン留め描画 ---
         function renderPinned() {
             let html = "";
             for(let i=1; i<=5; i++) {
@@ -631,7 +590,7 @@
             renderPinned();
         };
 
-        function togglePin(slot) {
+        function togglePinBySelected(slot) {
             if (!state.selected) return;
             const target = state.selected;
             if (state.pinned[slot] === target) {
@@ -643,6 +602,40 @@
             renderPinned();
             render();
         }
+
+        window.pinFontDirect = (e, font) => {
+            e.stopPropagation();
+            for(let k in state.pinned) if(state.pinned[k] === font) return;
+            
+            let emptySlot = 0;
+            for(let i=1; i<=5; i++) {
+                if(!state.pinned[i]) { emptySlot = i; break; }
+            }
+            if(emptySlot > 0) {
+                state.pinned[emptySlot] = font;
+                renderPinned();
+                render();
+            } else {
+                alert("ピン留めは5つまでです。既存のピン留めを解除してください。");
+            }
+        };
+
+        window.unpinFontDirect = (e, slot) => {
+            e.stopPropagation();
+            state.pinned[slot] = null;
+            renderPinned();
+            render();
+        };
+
+        window.copyFontName = (e, font) => {
+            e.stopPropagation();
+            navigator.clipboard.writeText(font).then(() => {
+                const btn = e.currentTarget;
+                const originalText = btn.innerHTML;
+                btn.innerHTML = "✅";
+                setTimeout(() => btn.innerHTML = originalText, 1000);
+            });
+        };
 
         function updateEdgeUI() {
             if (state.colEdge) {
